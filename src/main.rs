@@ -279,7 +279,7 @@ fn actual_main() -> Result<(), i32> {
                             };
                             let install_res = {
                                     let cfg = configuration.get(&package.name);
-                                    if !opts.install_cargo.0 && registry_name == "crates-io" && opts.cargo_install_args.is_empty() &&
+                                    if opts.use_binstall && !opts.install_cargo.0 && registry_name == "crates-io" && opts.cargo_install_args.is_empty() &&
                                        (cfg == None || cfg == Some(&Default::default())) {
                                             jobserverise(Command::new("cargo-binstall"))
                                                 .arg("--roots")

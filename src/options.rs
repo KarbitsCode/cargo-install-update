@@ -65,6 +65,8 @@ pub struct Options {
     pub cargo_install_args: Vec<OsString>,
     /// The cargo to run for installations, and whether it was overridden. Default: `(false, "${CARGO-cargo}")`.
     pub install_cargo: (bool, Cow<'static, OsStr>),
+    /// Whether to use cargo-binstall when available. Default: `false`
+    pub use_binstall: bool,
     /// `cargo install -j` argument. Default: `None`
     pub jobs: Option<NonZero<usize>>,
     /// Start jobserver to fill this many CPUs. Default: `None`
@@ -132,6 +134,9 @@ impl Options {
                             .action(ArgAction::Set)
                             .num_args(1)
                             .value_parser(ValueParser::os_string()),
+                        arg!(--"use-binstall" "Use cargo-binstall when available")
+                            .required(false)
+                            .action(ArgAction::SetTrue),
                         arg!(-j --"jobs" <JOBS>)
                             .help(format!("Limit number of parallel jobs or \"default\" for {}", nproc))
                             .required(false)
@@ -196,6 +201,7 @@ impl Options {
                 Some(ic) => (true, Cow::Owned(ic)),
                 None => (false, env::var_os("CARGO").map(Cow::Owned).unwrap_or(OsStr::new("cargo").into())),
             },
+            use_binstall: matches.remove_one("use-binstall").unwrap_or(false),
             jobs: if recursive_jobs.is_some() {
                 None
             } else {
