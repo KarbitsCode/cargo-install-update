@@ -1,0 +1,1 @@
+git pull -v --prune && git gc && cargo b && cargo b -r
